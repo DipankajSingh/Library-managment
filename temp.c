@@ -63,6 +63,31 @@ int insertAtIndex(int arr[], int *size, int position, int value)
     return 1;
 }
 
+int binarySearch(int arr[], int *size, int value)
+{
+    int low = 0, high = *size - 1;
+
+    while (low <= high)
+    {
+        int mid = (low + high) / 2;
+        printf("loop\n");
+        if (value == arr[mid])
+        {
+            return mid;
+        }
+        else if (arr[mid] < value)
+        {
+            low = mid + 1;
+        }
+        else
+        {
+            high = mid - 1;
+        }
+    }
+
+    return -1;
+}
+
 int main()
 {
     int initialSize = 7;
@@ -70,11 +95,12 @@ int main()
 
     int arr[MAX_SIZE] = {1, 2, 3, 4, 5, 6, 7};
 
-    insertAtIndex(arr, size, 4, 45);
+    // insertAtIndex(arr, size, 4, 45);
 
     printArray(arr, *size);
-    deleteElement(arr, size, -11);
-    printArray(arr, *size);
+    // deleteElement(arr, size, -11);
+    // printArray(arr, *size);
+    printf("Result of binary search is: %d\n", binarySearch(arr, size, 4));
 
     return 0;
 }
