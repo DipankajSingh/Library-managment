@@ -7,23 +7,33 @@ typedef struct Node
     struct Node *ptr;
 } Node;
 
-void printValue(Node *node)
-{
-    while (node != NULL)
-    {
-        printf("%d ", node->value);
-        node = node->ptr;
-    }
-}
-
 typedef struct LinkedList
 {
     Node *headNode;
     Node *lastNode;
     int size;
-    void (*appendElementAtEnd)(struct LinkedList *, int);
-
 } LinkedList;
+
+void printValue(LinkedList *list)
+{
+    Node *node = list->headNode;
+
+    do
+    {
+        printf("%d ", node->value);
+        node = node->ptr;
+    } while (node != NULL);
+}
+
+void appendAtStart(LinkedList *list, int value)
+{
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->value = value;
+    newNode->ptr = list->headNode;
+
+    list->headNode = newNode;
+    list->size++;
+}
 
 void appendElementAtEnd(LinkedList *list, int value)
 {
@@ -44,15 +54,49 @@ void appendElementAtEnd(LinkedList *list, int value)
     list->size++;
 }
 
+void insertAtIndex(LinkedList *list, int index, int value)
+{
+
+    if (index < 0 || index > list->size)
+    {
+        printf("\nInvalid index!\n");
+        return;
+    }
+
+    if (index == 0)
+    {
+        appendAtStart(list, value);
+        return;
+    }
+
+    if (index == list->size)
+    {
+        appendElementAtEnd(list, value);
+        return;
+    }
+
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->value = value;
+    Node *node = list->headNode;
+
+    for (int i = 0; i < index - 1; i++)
+    {
+        node = node->ptr;
+    }
+
+    newNode->ptr = node->ptr;
+    node->ptr = newNode;
+    list->size++;
+}
+
 LinkedList createList(int initialValue)
 {
     LinkedList list;
     list.headNode = NULL;
     list.lastNode = NULL;
     list.size = 0;
-    list.appendElementAtEnd = appendElementAtEnd;
 
-    list.appendElementAtEnd(&list, initialValue); // Add the initial element to the list
+    appendElementAtEnd(&list, initialValue);
 
     return list;
 }
@@ -61,10 +105,13 @@ int main()
 {
 
     LinkedList list = createList(25);
-    list.appendElementAtEnd(&list, 20);
-    // printf("%d ", (headNode->value));
 
-    printValue(list.headNode);
+    appendAtStart(&list, 20);
+    appendElementAtEnd(&list, 30);
+    appendElementAtEnd(&list, 305);
+    appendAtStart(&list, 555);
+    insertAtIndex(&list, 0, 255);
+    printValue(&list);
 
     return 0;
 }
