@@ -3,7 +3,7 @@
 
 typedef struct Node
 {
-    int value;
+    char value;
     struct Node *ptr;
 } Node;
 
@@ -17,38 +17,38 @@ typedef struct StackLL
 Node *createNode(int value)
 {
     Node *node = (Node *)malloc(sizeof(Node));
-    if (node == NULL)
-    {
-        printf("\nHeap overflow!!\n");
-        return;
-    }
-    node->value = value;
     node->ptr = NULL;
+    node->value = value;
     return node;
 }
 
-StackLL createStack(int initialValue, int max_size)
+StackLL createStack(int max_size)
 {
     StackLL stk;
     stk.max_size = 4000;
-    Node *n = createNode(initialValue);
-    stk.top = n;
-    stk.size++;
+    stk.size = 0;
     return stk;
 }
 
-int push(StackLL *stk, int value)
+int push(StackLL *stk, char value)
 {
 
     if (stk->size >= stk->max_size)
     {
-        printf("Stack Overflow!!\n");
+        printf("Push: Stack Overflow!!\n");
         return 0;
     }
-
     Node *newNode = createNode(value);
-    newNode->ptr = stk->top;
-    stk->top = newNode;
+
+    if (stk->size <= 0)
+    {
+        stk->top = newNode;
+    }
+    else
+    {
+        newNode->ptr = stk->top;
+        stk->top = newNode;
+    }
     stk->size++;
     return 1;
 }
@@ -58,7 +58,7 @@ int pop(StackLL *stk)
 
     if (stk->size <= 0)
     {
-        printf("Stack is Empty!!\n");
+        printf("Pop: Stack is Empty!!\n");
         return 0;
     }
     Node *node = stk->top;
@@ -72,31 +72,27 @@ void peek(StackLL *stk)
 {
     if (stk->size <= 0)
     {
-        printf("Stack is Empty!!\n");
-        return 0;
+        printf("Peek: Stack is Empty!!\n");
+        return;
     }
 
     Node *ptr = stk->top;
     do
     {
-        printf("%d ", ptr->value);
+        printf("%c ", ptr->value);
         ptr = ptr->ptr;
     } while (ptr != NULL);
 
     printf("\n");
 }
 
+// -1: Error, 0: Parentheses Balanced, >0: Parentheses Are Not Balanced
+
 int main()
 {
-    StackLL stk = createStack(54, 400);
-    push(&stk, 45);
-    push(&stk, 45558);
-    peek(&stk);
-    pop(&stk);
-    pop(&stk);
-    pop(&stk);
-    pop(&stk);
-    peek(&stk);
+    StackLL stk = createStack(400);
+
+    char exp[] = ")())(()";
 
     return 0;
 }
