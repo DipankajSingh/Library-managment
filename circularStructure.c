@@ -17,8 +17,8 @@ typedef struct Queue
 Queue *createQueue()
 {
     Queue *cir = (Queue *)malloc(sizeof(Queue));
-    cir->front = NULL;
-    cir->rear = NULL;
+    cir->front = cir->rear = NULL;
+
     cir->elementCount = 0;
     return cir;
 }
