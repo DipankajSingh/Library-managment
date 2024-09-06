@@ -1,117 +1,99 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct CircularQueue
+typedef struct Node
 {
-    int front;
-    int rear;
-    int elementCount;
-    int *arr;
-    int size;
-} CircularQueue;
+    int value;
+    struct Node *next;
+} Node;
 
-CircularQueue *createCircular(int size)
+typedef struct Queue
 {
-    CircularQueue *cir = (CircularQueue *)malloc(sizeof(CircularQueue));
-    cir->front = -1;
-    cir->rear = -1;
-    cir->size = size;
-    cir->arr = (int *)malloc(size * sizeof(int));
+    Node *front;
+    Node *rear;
+    int elementCount;
+} Queue;
+
+Queue *createQueue()
+{
+    Queue *cir = (Queue *)malloc(sizeof(Queue));
+    cir->front = NULL;
+    cir->rear = NULL;
     cir->elementCount = 0;
     return cir;
 }
 
-int isFull(CircularQueue *cir)
+int isEmpty(Queue *cir)
 {
-    return (cir->front == (cir->rear + 1) % cir->size);
+    return cir->front == NULL;
 }
 
-int isEmpty(CircularQueue *cir)
+void enqueue(Queue *cir, int value)
 {
-    return cir->front == -1;
-}
-
-void enqueue(CircularQueue *cir, int value)
-{
-    if (isFull(cir))
-    {
-        printf("enqueue: queue full!\n");
-        return;
-    }
-
+    Node *n = (Node *)malloc(sizeof(Node));
+    n->value = value;
+    n->next = NULL;
     if (isEmpty(cir))
     {
-        cir->front = cir->rear = 0;
+        cir->front = n;
+        cir->rear = n;
     }
     else
     {
-        cir->rear = (cir->rear + 1) % cir->size;
-    }
 
-    cir->arr[cir->rear] = value;
+        cir->rear->next = n;
+        cir->rear = n;
+    }
     cir->elementCount++;
 }
 
-int dequeue(CircularQueue *cir)
+int dequeue(Queue *cir)
 {
     if (isEmpty(cir))
     {
-        printf("dequeue: queue empty!\n");
-        return -1;
+        printf("\nDequeue: empty queue!\n");
+        return 0;
     }
-
-    int value = cir->arr[cir->front];
-
-    if (cir->front == cir->rear) // Queue has only one element
+    int val = cir->front->value;
+    if (cir->elementCount <= 1)
     {
-        cir->front = cir->rear = -1; // Reset the queue
-    }
-    else
-    {
-        cir->front = (cir->front + 1) % cir->size;
+        free(cir->front);
+        cir->front = cir->rear = NULL;
+        cir->elementCount = 0;
+        return val;
     }
 
-    cir->elementCount--;
-    return value;
+    Node *nxtElm = cir->front;
+    cir->front = cir->front->next;
+    free(nxtElm);
+    printf("\nThe value that has been removed is %d \n", val);
+    return val;
 }
 
-void traversal(CircularQueue *cir)
+void traversal(Queue *cir)
 {
     if (isEmpty(cir))
     {
-        printf("traversal: queue empty!\n");
+        printf("\ntraversal: queue empty!\n");
         return;
     }
-
-    int i = cir->front;
-    while (i != cir->rear)
+    Node *node = cir->front;
+    do
     {
-        printf("%d, ", cir->arr[i]);
-        i = (i + 1) % cir->size;
-    }
-    printf("%d\n", cir->arr[i]); // Print the last element (rear)
+        printf("%d ", node->value);
+        node = node->next;
+    } while (node != NULL);
 }
 
 int main()
 {
-    CircularQueue *cir = createCircular(10);
+    Queue *cir = createQueue();
 
     enqueue(cir, 2);
-    enqueue(cir, 5);
-    enqueue(cir, 8);
-    enqueue(cir, 10);
-
     traversal(cir);
-
     dequeue(cir);
     dequeue(cir);
-
+    dequeue(cir);
     traversal(cir);
-
-    enqueue(cir, 15);
-    enqueue(cir, 20);
-
-    traversal(cir);
-
     return 0;
 }
